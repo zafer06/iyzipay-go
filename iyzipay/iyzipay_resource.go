@@ -7,7 +7,6 @@ import (
     "crypto/sha1"
     "encoding/base64"
     "strings"
-    "fmt"
 )
 
 const Version = "0.3.1"
@@ -35,13 +34,13 @@ func connect(method string, url string, options Options, request string, pkiStri
     defer res.Body.Close()
 
     body, _ := ioutil.ReadAll(res.Body)
-
+    /*
     fmt.Println("-------------------------------------------------------------")
     fmt.Println("PKI STRING -> ", pkiString)
     fmt.Println("-------------------------------------------------------------")
     fmt.Println("AUTHORIZATION STRING -> ", authString)
     fmt.Println("-------------------------------------------------------------")
-
+    */
     return string(body)
 }
 
