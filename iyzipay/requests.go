@@ -86,6 +86,84 @@ func RetrievePayment(request string, options Options) string {
     return connect("POST", reqUrl, options, request, pkiString)
 }
 
+func ThreedsInitialize(request string, options Options) string {
+    var req map[string]interface{}
+    json.Unmarshal([]byte(request), &req)
+
+    var pki PkiBuilder
+    pki.append("locale", req["locale"].(string))
+    pki.append("conversationId", req["conversationId"].(string))
+    pki.appendPrice("price", req["price"].(string))
+    pki.appendPrice("paidPrice", req["paidPrice"].(string))
+    pki.append("installment", req["installment"].(string))
+    pki.append("paymentChannel", req["paymentChannel"].(string))
+    pki.append("basketId", req["basketId"].(string))
+    pki.append("paymentGroup", req["paymentGroup"].(string))
+    pki.append("paymentCard", pkiPaymentCard(req["paymentCard"].(map[string]interface{})))
+    pki.append("buyer", pkiBuyer(req["buyer"].(map[string]interface{})))
+    pki.append("shippingAddress", pkiAddress(req["shippingAddress"].(map[string]interface{})))
+    pki.append("billingAddress", pkiAddress(req["billingAddress"].(map[string]interface{})))
+    pki.append("basketItems", pkiBasketItems(req["basketItems"].([]interface{})))
+    pki.append("currency", req["currency"].(string))
+    pki.append("callbackUrl", req["callbackUrl"].(string))
+
+    reqUrl := options.BaseUrl + "/payment/3dsecure/initialize"
+    pkiString := pki.getPkiString()
+
+    return connect("POST", reqUrl, options, request, pkiString)
+}
+
+func CreateThreedsPayment(request string, options Options) string {
+    var req map[string]interface{}
+    json.Unmarshal([]byte(request), &req)
+
+    var pki PkiBuilder
+    pki.append("locale", req["locale"].(string));
+    pki.append("conversationId", req["conversationId"].(string));
+    pki.append("paymentId", req["paymentId"].(string));
+    pki.append("conversationData", req["conversationData"].(string));
+
+    reqUrl := options.BaseUrl + "/payment/3dsecure/auth"
+    pkiString := pki.getPkiString()
+
+    return connect("POST", reqUrl, options, request, pkiString)
+}
+
+func CreateRefund(request string, options Options) string {
+    var req map[string]interface{}
+    json.Unmarshal([]byte(request), &req)
+
+    var pki PkiBuilder
+    pki.append("locale", req["locale"].(string));
+    pki.append("conversationId", req["conversationId"].(string));
+    pki.append("paymentTransactionId", req["paymentTransactionId"].(string));
+    pki.appendPrice("price", req["price"].(string));
+    pki.append("ip", req["ip"].(string));
+    pki.append("currency", req["currency"].(string));
+
+    reqUrl := options.BaseUrl + "/payment/refund"
+    pkiString := pki.getPkiString()
+
+    return connect("POST", reqUrl, options, request, pkiString)
+}
+
+func CreateCancel(request string, options Options) string {
+    var req map[string]interface{}
+    json.Unmarshal([]byte(request), &req)
+
+    var pki PkiBuilder
+    pki.append("locale", req["locale"].(string));
+    pki.append("conversationId", req["conversationId"].(string));
+    pki.append("paymentId", req["paymentId"].(string));
+    pki.append("ip", req["ip"].(string));
+
+    reqUrl := options.BaseUrl + "/payment/cancel"
+    pkiString := pki.getPkiString()
+
+    return connect("POST", reqUrl, options, request, pkiString)
+}
+
+
 
 
 func pkiBasketItems(jsonArray []interface{}) string {

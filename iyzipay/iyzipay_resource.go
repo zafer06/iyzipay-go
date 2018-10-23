@@ -7,9 +7,10 @@ import (
     "crypto/sha1"
     "encoding/base64"
     "strings"
+    "fmt"
 )
 
-const Version = "0.2.0"
+const Version = "0.3.1"
 
 type Options struct {
     ApiKey string
@@ -18,7 +19,7 @@ type Options struct {
 }
 
 func connect(method string, url string, options Options, request string, pkiString string) string {
-    var randomString string = time.Now().String()
+    var randomString string = time.Now().UTC().Format("2006-01-02T15:04:05-0700")
     var authString = prepareAuthorizationString(pkiString, randomString, options)
 
     payload := strings.NewReader(request)
@@ -34,6 +35,12 @@ func connect(method string, url string, options Options, request string, pkiStri
     defer res.Body.Close()
 
     body, _ := ioutil.ReadAll(res.Body)
+
+    fmt.Println("-------------------------------------------------------------")
+    fmt.Println("PKI STRING -> ", pkiString)
+    fmt.Println("-------------------------------------------------------------")
+    fmt.Println("AUTHORIZATION STRING -> ", authString)
+    fmt.Println("-------------------------------------------------------------")
 
     return string(body)
 }
